@@ -515,11 +515,8 @@ class RiceTracker(HomePage):
         image_label.image = photo  # Keep a reference to avoid garbage collection
         image_label.pack(side=tk.TOP, pady=1)
 
-
         not_button = ttk.Button(button_frame, text="OTHERS' RICE MILL", command=self.pagiling_ng_iba, style='Content.TButton')
         not_button.pack(side=tk.BOTTOM, pady=40, ipadx=300, padx=150)
-        
-
         
     def ownedrice(self):
         self.clear_content_frame()
@@ -585,6 +582,9 @@ class RiceTracker(HomePage):
 
         remove_button = ttk.Button(dashboard_frame, text="Remove", command=self.remove_rice, style='Content.TButton')
         remove_button.pack(side=tk.LEFT, padx=10)
+
+        otherrice_button = ttk.Button(dashboard_frame, text="Other's Rice Mill", command=self.pagiling_ng_iba, style='Content.TButton')
+        otherrice_button.pack(side=tk.LEFT, padx=10)
         
     # DISPLAY
     def display_all_rice(self):
@@ -652,6 +652,9 @@ class RiceTracker(HomePage):
         remove_button = ttk.Button(dashboard_frame, text="Remove", command=self.remove_rice, style='Content.TButton')
         remove_button.pack(side=tk.LEFT, padx=10)
 
+        otherrice_button = ttk.Button(dashboard_frame, text="Other's Rice Mill", command=self.pagiling_ng_iba, style='Content.TButton')
+        otherrice_button.pack(side=tk.LEFT, padx=10)
+
     # HIGH SALES
     def show_highsales_rice(self):
         self.db_cursor.execute("SELECT * FROM rice WHERE sales >= 100000.00;")
@@ -709,6 +712,9 @@ class RiceTracker(HomePage):
         remove_button = ttk.Button(dashboard_frame, text="Remove ", command=self.remove_rice, style='Content.TButton')
         remove_button.pack(side=tk.LEFT, padx=10)
 
+        otherrice_button = ttk.Button(dashboard_frame, text="Other's Rice Mill", command=self.pagiling_ng_iba, style='Content.TButton')
+        otherrice_button.pack(side=tk.LEFT, padx=10)
+
     # LOW SALES
     def show_lowsales_rice(self):
         self.db_cursor.execute("SELECT * FROM rice WHERE sales <= 99999.00;")
@@ -752,7 +758,7 @@ class RiceTracker(HomePage):
             # Display message kapag walang low sales na nakita
             label = ttk.Label(self.content_frame, text="No low sales.", style='Content.TLabel')
             label.pack(anchor='w') 
-            
+             
         dashboard_frame = ttk.Frame(self.content_frame, padding=(355, 0, 0, 0), style='Content.TFrame')
         dashboard_frame.pack(fill=tk.X)
 
@@ -765,6 +771,9 @@ class RiceTracker(HomePage):
         
         remove_button = ttk.Button(dashboard_frame, text="Remove ", command=self.remove_rice, style='Content.TButton')
         remove_button.pack(side=tk.LEFT, padx=10)
+
+        otherrice_button = ttk.Button(dashboard_frame, text="Other's Rice Mill", command=self.pagiling_ng_iba, style='Content.TButton')
+        otherrice_button.pack(side=tk.LEFT, padx=10)
         
     # UPDATE
     def update_rice_details(self):
@@ -835,8 +844,7 @@ class RiceTracker(HomePage):
             if cursor:
                 cursor.close()
     
-        # REMOVE
- 
+    # REMOVE
     def remove_rice(self):
         selected_item = self.tree.selection()
         
@@ -902,7 +910,150 @@ class RiceTracker(HomePage):
         dashboard_frame = ttk.Frame(self.content_frame, padding=(215, 0, 0, 0), style='Content.TFrame')
         dashboard_frame.pack(fill=tk.X)
 
+        highsales_button = ttk.Button(dashboard_frame, text="High Sales", command=self.show_highsales_pagiling, style='Content.TButton')
+        highsales_button.pack(side=tk.LEFT, padx=10)
+
+        lowsales_button = ttk.Button(dashboard_frame, text="Low Sales", command=self.show_lowsales_pagiling, style='Content.TButton')
+        lowsales_button.pack(side=tk.LEFT, padx=10)
+        
+        remove_button = ttk.Button(dashboard_frame, text="Remove ", command=self.remove_pagiling, style='Content.TButton')
+        remove_button.pack(side=tk.LEFT, padx=10)
+
+        all_rice_button = ttk.Button(dashboard_frame, text="All Rice", command=self.display_all_rice, style='Content.TButton')
+        all_rice_button.pack(side=tk.LEFT, padx=10)
+
+    def show_highsales_pagiling(self):
+        self.db_cursor.execute("SELECT * FROM pagiling WHERE sales >= 10000.00;")
+        rice = self.db_cursor.fetchall()
+        
+        self.clear_content_frame()
+        
+        title_label = tk.Label(self.content_frame, text="LIST OF HIGH SALES", font=("Arial", 12, 'bold'))
+        title_label.pack(pady=0)
+        
+        if rice:
+            columns = ("ID", "Quantity of Rice (in kg)", "Date Received", "Sales")
+            self.tree = ttk.Treeview(self.content_frame, columns=columns, show="headings")
+
+            # Center column headings
+            for col in columns:
+                self.tree.heading(col, text=col, anchor=tk.CENTER)
+
+            # column widths
+            column_widths = [10, 100, 40, 80]
+            for col, width in zip(columns, column_widths):
+                self.tree.column(col, width=width)
+
+            # Insert data into the Treeview para sa high sales
+            for rice in rice:
+                self.tree.insert(parent='', index='end', iid=rice['id'], values=(
+                    rice['id'],
+                    rice['qty_of_rice_kg'],
+                    rice['date_received'],
+                    rice['sales']
+                ))
+
+                self.tree.pack(fill=tk.BOTH, expand=True, padx=0, pady=10)
+
+        else:
+            # Display message kapag walang high sales na nakita
+            label = ttk.Label(self.content_frame, text="No high sales.", style='Content.TLabel')
+            label.pack(anchor='w') 
+
+        dashboard_frame = ttk.Frame(self.content_frame, padding=(355, 0, 0, 0), style='Content.TFrame')
+        dashboard_frame.pack(fill=tk.X)
+
         # Dashboard buttons
+        all_pagiling_button = ttk.Button(dashboard_frame, text="All Other's Rice Mill", command=self.pagiling_ng_iba, style='Content.TButton')
+        all_pagiling_button.pack(side=tk.LEFT, padx=10)
+
+        lowsales_button = ttk.Button(dashboard_frame, text="Low Sales", command=self.show_lowsales_pagiling, style='Content.TButton')
+        lowsales_button.pack(side=tk.LEFT, padx=10)
+        
+        remove_button = ttk.Button(dashboard_frame, text="Remove ", command=self.remove_pagiling, style='Content.TButton')
+        remove_button.pack(side=tk.LEFT, padx=10)
+
+        all_rice_button = ttk.Button(dashboard_frame, text="All Rice", command=self.display_all_rice, style='Content.TButton')
+        all_rice_button.pack(side=tk.LEFT, padx=10)
+
+    # LOW SALES
+    def show_lowsales_pagiling(self):
+        self.db_cursor.execute("SELECT * FROM pagiling WHERE sales <= 9999.00;")
+        rice = self.db_cursor.fetchall()
+        
+        self.clear_content_frame()
+        
+        title_label = tk.Label(self.content_frame, text="LIST OF LOW SALES", font=("Arial", 12, 'bold'))
+        title_label.pack(pady=0)
+        
+        if rice:
+            columns = ("ID", "Quantity of Rice (in kg)", "Date Received", "Sales")
+            self.tree = ttk.Treeview(self.content_frame, columns=columns, show="headings")
+
+            # Center column headings
+            for col in columns:
+                self.tree.heading(col, text=col, anchor=tk.CENTER)
+
+            # column widths
+            column_widths = [10, 100, 40, 80]
+            for col, width in zip(columns, column_widths):
+                self.tree.column(col, width=width)
+
+            # Insert data into the Treeview para sa high sales
+            for rice in rice:
+                self.tree.insert(parent='', index='end', iid=rice['id'], values=(
+                    rice['id'],
+                    rice['qty_of_rice_kg'],
+                    rice['date_received'],
+                    rice['sales']
+                ))
+
+                self.tree.pack(fill=tk.BOTH, expand=True, padx=0, pady=10)
+
+        else:
+            # Display message kapag walang high sales na nakita
+            label = ttk.Label(self.content_frame, text="No low sales.", style='Content.TLabel')
+            label.pack(anchor='w') 
+
+        dashboard_frame = ttk.Frame(self.content_frame, padding=(355, 0, 0, 0), style='Content.TFrame')
+        dashboard_frame.pack(fill=tk.X)
+
+        # Dashboard buttons
+        all_pagiling_button = ttk.Button(dashboard_frame, text="All Other's Rice Mill", command=self.pagiling_ng_iba, style='Content.TButton')
+        all_pagiling_button.pack(side=tk.LEFT, padx=10)
+
+        highsales_button = ttk.Button(dashboard_frame, text="Low Sales", command=self.show_highsales_pagiling, style='Content.TButton')
+        highsales_button.pack(side=tk.LEFT, padx=10)
+        
+        remove_button = ttk.Button(dashboard_frame, text="Remove ", command=self.remove_pagiling, style='Content.TButton')
+        remove_button.pack(side=tk.LEFT, padx=10)
+
+        all_rice_button = ttk.Button(dashboard_frame, text="All Rice", command=self.display_all_rice, style='Content.TButton')
+        all_rice_button.pack(side=tk.LEFT, padx=10)
+
+    # REMOVE
+    def remove_pagiling(self):
+        selected_item = self.tree.selection()
+        
+        if not selected_item:
+            messagebox.showwarning("No Selection", "Please select a rice detail to delete.")
+            return
+        
+        id = self.tree.item(selected_item)['values'][0]
+        confirmation = messagebox.askyesno("Confirmation", "Are you sure you want to delete this rice detail?")
+        
+        if confirmation:
+            delete_query="""DELETE FROM pagiling WHERE id = %s"""
+            try:
+                self.db_cursor.execute(delete_query, id)
+                self.db_connection.commit()
+                print("Deletion Successful")  
+                messagebox.showinfo("Success", "Rice detail deleted successfully!")
+                self.ricetracker_records()
+                
+            except Exception as e:
+                print(f"Deletion Failed: {e}") 
+                messagebox.showerror("Error", f"Failed to delete rice detail: {e}")
 
 if __name__ == "__main__":
     root = tk.Tk()
