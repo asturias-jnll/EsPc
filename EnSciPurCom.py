@@ -331,7 +331,7 @@ class RiceDetails(HomePage):
         canvas.pack(side="left", fill="both", expand=True)
     
     def submit_rice(self):
-        #Kuha data sa entry fields
+        # Kuha data sa entry fields
         rice_data = {
             'type_of_rice': self.form_entries['Type of Rice'].get(),
             'qty_of_seeds_sacks': self.form_entries['Quantity of Seeds (in sacks)'].get(),
@@ -340,7 +340,16 @@ class RiceDetails(HomePage):
         
         date_planted = datetime.strptime(rice_data['date_planted'], "%Y-%m-%d")
         quantity = int(rice_data['qty_of_seeds_sacks'])
-        rice_data['estimated_date_harvest'] = date_planted + timedelta(days=120) # Assuming 120 days for harvest
+        rice_data['estimated_date_harvest'] = date_planted + timedelta(days=120)  # Assuming 120 days for harvest
+        
+        # presyo ng bigas base sa type
+        rice_prices = {
+            'White': 20.00,
+            'Brown': 49.00,  
+            'Red': 90.00
+        }
+        
+        rice_data['price_per_kg'] = rice_prices.get(rice_data['type_of_rice'].lower(), 0.00)
         rice_data['harvested_rice_kg'] = quantity * 100  # Assuming 100 kg per sack
         rice_data['rice_sold_kg'] = 0  # 0 kasi hindi pa nabebenta
         rice_data['stocks'] = rice_data['harvested_rice_kg'] - rice_data['rice_sold_kg']
@@ -348,8 +357,8 @@ class RiceDetails(HomePage):
         
         # Calculation para makuha natitirang stock at yung sales
         rice_data['stocks'] = rice_data['harvested_rice_kg'] - rice_data['rice_sold_kg']
-        rice_data['price_per_kg'] = 50.00  # presyo ng kada kilo
         rice_data['sales'] = rice_data['rice_sold_kg'] * rice_data['price_per_kg']
+
         
         # Validate if all required fields are filled
         required_fields = ['type_of_rice', 'qty_of_seeds_sacks', 'date_planted']
@@ -810,21 +819,32 @@ class RiceTracker(HomePage):
 
     # SAVE UPDATED INFO
     def save_updated_rice_info(self, rice_id, rice_sold_kg):
+        # presyo ng bigas base sa type
+        rice_prices = {
+            'white': 20.00,
+            'brown': 49.00,  
+            'red': 90.00
+        }
+
         try:
             cursor = self.db_connection.cursor()
 
-            select_query = "SELECT harvested_rice_kg FROM rice WHERE id=%s"
+            # Get the type of rice and harvested kg from the database
+            select_query = "SELECT type_of_rice, harvested_rice_kg FROM rice WHERE id=%s"
             cursor.execute(select_query, (rice_id,))
             result = cursor.fetchone()
-            harvested_rice_kg = result[0] if result else 0
+            type_of_rice, harvested_rice_kg = result if result else ('', 0)
 
             rice_sold_kg = int(rice_sold_kg)
 
-            # Calculation ng stocks and ales
-            stocks = harvested_rice_kg - rice_sold_kg 
-            price_per_kg = 50.00 
+            # Get the price per kg based on the type of rice
+            price_per_kg = rice_prices.get(type_of_rice.lower(), 0.00)
+
+            # Calculation ng stocks and sales
+            stocks = harvested_rice_kg - rice_sold_kg
             sales = rice_sold_kg * price_per_kg
 
+            # Update the database with the new information
             query = "UPDATE rice SET rice_sold_kg=%s, stocks=%s, sales=%s WHERE id=%s"
             values = (rice_sold_kg, stocks, sales, rice_id)
             cursor.execute(query, values)
@@ -862,7 +882,6 @@ class RiceTracker(HomePage):
                 self.db_connection.commit()
                 print("Deletion Successful")  
                 messagebox.showinfo("Success", "Rice detail deleted successfully!")
-                self.ricetracker_records()
                 
             except Exception as e:
                 print(f"Deletion Failed: {e}") 
@@ -1049,7 +1068,6 @@ class RiceTracker(HomePage):
                 self.db_connection.commit()
                 print("Deletion Successful")  
                 messagebox.showinfo("Success", "Rice detail deleted successfully!")
-                self.ricetracker_records()
                 
             except Exception as e:
                 print(f"Deletion Failed: {e}") 
