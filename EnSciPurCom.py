@@ -128,7 +128,7 @@ class HomePage:
         self.root.style.configure('Sidebar.TButton', background='Black', foreground='Black', font=('Arial', 10, 'bold'), borderwidth=0)
         self.root.style.configure('Sidebar.TFrame', background='olive')
         self.root.style.configure('Content.TFrame', background='White')
-        self.root.style.configure('Content.TLabel', background='White', borderwidth=0, relief='solid', padding=(5, 5), foreground='Black')
+        self.root.style.configure('Content.TLabel', background='white', borderwidth=0, relief='solid', padding=(5, 5), foreground='Black')
         self.root.style.configure('Content.TButton', background='Black', foreground='darkgreen', font=('Arial', 10, 'bold'), borderwidth=10)
         
         self.display_home()
@@ -259,10 +259,23 @@ class RiceDetails(HomePage):
         button_frame = ttk.Frame(self.content_frame)
         button_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-        owned_button = ttk.Button(button_frame, text="Owned Rice", command=self.display_rice_form, style='Content.TButton')
-        owned_button.pack(side=tk.TOP, pady=(0, 10))
-        not_button = ttk.Button(button_frame, text="Pagiling ng Iba", command=self.pagiling_ng_iba_form, style='Content.TButton')
-        not_button.pack(side=tk.TOP)
+        owned_button = ttk.Button(button_frame, text="RICE MILL OWNER", command=self.display_rice_form, style='Content.TButton')
+        owned_button.pack(side=tk.TOP, pady=50, ipadx=310, padx=150)
+        
+        # Load and resize the image
+        image_path = "details.png"  # Replace with the correct path to your image
+        original_image = Image.open(image_path)
+        resized_image = original_image.resize((700, 100))  # Resize to width x height
+        photo = ImageTk.PhotoImage(resized_image)
+
+        # Create a Label widget to hold the image
+        image_label = tk.Label(button_frame, image=photo)
+        image_label.image = photo  # Keep a reference to avoid garbage collection
+        image_label.pack(side=tk.TOP, pady=1)
+
+        not_button = ttk.Button(button_frame, text="OTHERS' RICE MILL", command=self.pagiling_ng_iba_form, style='Content.TButton')
+        not_button.pack(side=tk.BOTTOM, pady=40, ipadx=300, padx=150)
+        
         
     def display_rice_form(self):
         self.clear_content_frame()
@@ -282,7 +295,7 @@ class RiceDetails(HomePage):
 
         #Display application form
         form_label = ttk.Label(form_frame, text="RICE DETAILS", font=('Arial', 16, 'bold'), style='Content.TLabel')
-        form_label.pack(side=tk.TOP, pady=5, ipadx=370, ipady=10, fill=tk.X)
+        form_label.pack(side=tk.TOP, pady=5, ipadx=430, ipady=10, fill=tk.X)
         
         #Entry fields
         form_fields = [
@@ -396,8 +409,8 @@ class RiceDetails(HomePage):
         canvas.create_window((10, 10), window=form_frame, anchor="nw")
 
         #Display application form
-        form_label = ttk.Label(form_frame, text="PAGILING NG IBA", font=('Arial', 16, 'bold'), style='Content.TLabel')
-        form_label.pack(side=tk.TOP, pady=5, ipadx=370, ipady=10, fill=tk.X)
+        form_label = ttk.Label(form_frame, text="OTHERS' RICE MILL", font=('Arial', 16, 'bold'), style='Content.TLabel')
+        form_label.pack(side=tk.TOP, pady=5, ipadx=420, ipady=10, fill=tk.X)
         
         #Entry fields
         form_fields = [
@@ -488,10 +501,25 @@ class RiceTracker(HomePage):
         button_frame = ttk.Frame(self.content_frame)
         button_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-        owned_button = ttk.Button(button_frame, text="Owned Rice", command=self.ownedrice, style='Content.TButton')
-        owned_button.pack(side=tk.TOP, pady=(0, 10))
-        not_button = ttk.Button(button_frame, text="Pagiling ng Iba", command=self.pagiling_ng_iba, style='Content.TButton')
-        not_button.pack(side=tk.TOP)
+        owned_button = ttk.Button(button_frame, text="RICE MILL OWNER", command=self.ownedrice, style='Content.TButton')
+        owned_button.pack(side=tk.TOP, pady=50, ipadx=310, padx=150)
+        
+        # Load and resize the image
+        image_path = "tracker.png"  # Replace with the correct path to your image
+        original_image = Image.open(image_path)
+        resized_image = original_image.resize((700, 100))  # Resize to width x height
+        photo = ImageTk.PhotoImage(resized_image)
+
+        # Create a Label widget to hold the image
+        image_label = tk.Label(button_frame, image=photo)
+        image_label.image = photo  # Keep a reference to avoid garbage collection
+        image_label.pack(side=tk.TOP, pady=1)
+
+
+        not_button = ttk.Button(button_frame, text="OTHERS' RICE MILL", command=self.pagiling_ng_iba, style='Content.TButton')
+        not_button.pack(side=tk.BOTTOM, pady=40, ipadx=300, padx=150)
+        
+
         
     def ownedrice(self):
         self.clear_content_frame()
@@ -542,21 +570,21 @@ class RiceTracker(HomePage):
             
         self.tree.pack(fill=tk.BOTH, expand=True, padx=0, pady=10)
 
-        dashboard_frame = ttk.Frame(self.content_frame, padding=(215, 0, 0, 0), style='Content.TFrame')
+        dashboard_frame = ttk.Frame(self.content_frame, padding=(270, 0, 0, 0), style='Content.TFrame')
         dashboard_frame.pack(fill=tk.X)
 
         # Dashboard buttons
         highsales_button = ttk.Button(dashboard_frame, text="High Sales", command=self.show_highsales_rice, style='Content.TButton')
-        highsales_button.pack(side=tk.LEFT, padx=5)
+        highsales_button.pack(side=tk.LEFT, padx=10)
 
         lowsales_button = ttk.Button(dashboard_frame, text="Low Sales", command=self.show_lowsales_rice, style='Content.TButton')
-        lowsales_button.pack(side=tk.LEFT, padx=5)
+        lowsales_button.pack(side=tk.LEFT, padx=10)
         
         update_button = ttk.Button(dashboard_frame, text="Update Rice Details", command=self.update_rice_details, style='Content.TButton')
-        update_button.pack(side=tk.LEFT, padx=5)
+        update_button.pack(side=tk.LEFT, padx=10)
 
         remove_button = ttk.Button(dashboard_frame, text="Remove", command=self.remove_rice, style='Content.TButton')
-        remove_button.pack(side=tk.LEFT, padx=5)
+        remove_button.pack(side=tk.LEFT, padx=10)
         
     # DISPLAY
     def display_all_rice(self):
@@ -608,21 +636,21 @@ class RiceTracker(HomePage):
             
         self.tree.pack(fill=tk.BOTH, expand=True, padx=0, pady=10)
 
-        dashboard_frame = ttk.Frame(self.content_frame, padding=(215, 0, 0, 0), style='Content.TFrame')
+        dashboard_frame = ttk.Frame(self.content_frame, padding=(270, 0, 0, 0), style='Content.TFrame')
         dashboard_frame.pack(fill=tk.X)
 
         # Dashboard buttons
         highsales_button = ttk.Button(dashboard_frame, text="High Sales", command=self.show_highsales_rice, style='Content.TButton')
-        highsales_button.pack(side=tk.LEFT, padx=5)
+        highsales_button.pack(side=tk.LEFT, padx=10)
 
         lowsales_button = ttk.Button(dashboard_frame, text="Low Sales", command=self.show_lowsales_rice, style='Content.TButton')
-        lowsales_button.pack(side=tk.LEFT, padx=5)
+        lowsales_button.pack(side=tk.LEFT, padx=10)
         
         update_button = ttk.Button(dashboard_frame, text="Update Rice Details", command=self.update_rice_details, style='Content.TButton')
-        update_button.pack(side=tk.LEFT, padx=5)
+        update_button.pack(side=tk.LEFT, padx=10)
 
         remove_button = ttk.Button(dashboard_frame, text="Remove", command=self.remove_rice, style='Content.TButton')
-        remove_button.pack(side=tk.LEFT, padx=5)
+        remove_button.pack(side=tk.LEFT, padx=10)
 
     # HIGH SALES
     def show_highsales_rice(self):
@@ -668,18 +696,18 @@ class RiceTracker(HomePage):
             label = ttk.Label(self.content_frame, text="No high sales.", style='Content.TLabel')
             label.pack(anchor='w') 
 
-        dashboard_frame = ttk.Frame(self.content_frame, padding=(160, 0, 0, 0), style='Content.TFrame')
+        dashboard_frame = ttk.Frame(self.content_frame, padding=(355, 0, 0, 0), style='Content.TFrame')
         dashboard_frame.pack(fill=tk.X)
 
         # Dashboard buttons
         all_rice_button = ttk.Button(dashboard_frame, text="All Rice", command=self.display_all_rice, style='Content.TButton')
-        all_rice_button.pack(side=tk.LEFT, padx=5)
+        all_rice_button.pack(side=tk.LEFT, padx=10)
 
         lowsales_button = ttk.Button(dashboard_frame, text="Low Sales", command=self.show_lowsales_rice, style='Content.TButton')
-        lowsales_button.pack(side=tk.LEFT, padx=5)
+        lowsales_button.pack(side=tk.LEFT, padx=10)
         
         remove_button = ttk.Button(dashboard_frame, text="Remove ", command=self.remove_rice, style='Content.TButton')
-        remove_button.pack(side=tk.LEFT, padx=5)
+        remove_button.pack(side=tk.LEFT, padx=10)
 
     # LOW SALES
     def show_lowsales_rice(self):
@@ -725,18 +753,18 @@ class RiceTracker(HomePage):
             label = ttk.Label(self.content_frame, text="No low sales.", style='Content.TLabel')
             label.pack(anchor='w') 
             
-        dashboard_frame = ttk.Frame(self.content_frame, padding=(240, 0, 0, 0), style='Content.TFrame')
+        dashboard_frame = ttk.Frame(self.content_frame, padding=(355, 0, 0, 0), style='Content.TFrame')
         dashboard_frame.pack(fill=tk.X)
 
         # Dashboard buttons
         all_rice_button = ttk.Button(dashboard_frame, text="All Rice", command=self.display_all_rice, style='Content.TButton')
-        all_rice_button.pack(side=tk.LEFT, padx=5)
+        all_rice_button.pack(side=tk.LEFT, padx=10)
 
         highsales_button = ttk.Button(dashboard_frame, text="High Sales", command=self.show_highsales_rice, style='Content.TButton')
-        highsales_button.pack(side=tk.LEFT, padx=5)
+        highsales_button.pack(side=tk.LEFT, padx=10)
         
         remove_button = ttk.Button(dashboard_frame, text="Remove ", command=self.remove_rice, style='Content.TButton')
-        remove_button.pack(side=tk.LEFT, padx=5)
+        remove_button.pack(side=tk.LEFT, padx=10)
         
     # UPDATE
     def update_rice_details(self):
